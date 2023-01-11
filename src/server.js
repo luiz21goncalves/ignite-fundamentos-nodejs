@@ -2,6 +2,8 @@ import http from 'node:http'
 
 const PORT = 3333
 
+const users = []
+
 const server = http.createServer((request, response) => {
   const { method, url } = request
 
@@ -11,10 +13,16 @@ const server = http.createServer((request, response) => {
   const hasUserPath = url === '/users'
 
   if (isGetMethod && hasUserPath) {
-    return response.end('List user')
+    return response.setHeader('Content-type', 'application/json').end(JSON.stringify(users))
   }
 
   if (isPostMethod && hasUserPath) {
+    users.push({
+      id: users.length + 1,
+      name: 'John Doe',
+      email: 'johndoe@email.com'
+    })
+
     return response.end('Create user')
   }
 
