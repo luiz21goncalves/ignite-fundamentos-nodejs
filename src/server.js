@@ -23,10 +23,10 @@ const server = http.createServer((request, response) => {
       email: 'johndoe@email.com'
     })
 
-    return response.end('Create user')
+    return response.writeHead(201).end()
   }
 
-  return response.end('Hello World')
+  return response.writeHead(404).end()
 })
 
 server.listen(PORT)
