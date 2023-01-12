@@ -1,10 +1,11 @@
 import http from 'node:http'
 
 import { json } from './middlewares/json.js'
+import { Database } from './database.js'
 
 const PORT = 3333
 
-const users = []
+const database = new Database()
 
 const server = http.createServer(async (request, response) => {
   const { method, url } = request
@@ -17,17 +18,21 @@ const server = http.createServer(async (request, response) => {
   await json(request, response)
 
   if (isGetMethod && hasUserPath) {
+    const users = database.select('users')
+
     return response.end(JSON.stringify(users))
   }
 
   if (isPostMethod && hasUserPath) {
     const { name, email } = request.body
 
-    users.push({
-      id: users.length + 1,
+    const user = {
+      id: 1,
       name,
       email
-    })
+    }
+
+    database.insert('users', user)
 
     return response.writeHead(201).end()
   }
