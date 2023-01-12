@@ -1,20 +1,19 @@
 import http from 'node:http'
-import { Transform } from 'node:stream'
 
 const PORT = 3334
 
-class InverseNumber extends Transform {
-  _transform (chunk, encoding, callback) {
-    const transformed = String(Number(chunk.toString()) * -1)
+const server = http.createServer(async (request, response) => {
+  const buffers = []
 
-    console.log(transformed)
-
-    callback(null, transformed)
+  for await (const chunk of request) {
+    buffers.push(chunk)
   }
-}
 
-const server = http.createServer((request, response) => {
-  request.on('data', (chunk) => chunk).pipe(new InverseNumber()).pipe(response)
+  const requestBody = Buffer.concat(buffers).toString()
+
+  console.log({ requestBody })
+
+  return response.end(requestBody)
 })
 
 server.listen(PORT)
